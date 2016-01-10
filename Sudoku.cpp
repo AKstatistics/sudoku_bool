@@ -669,7 +669,7 @@ void Sudoku::deterministic()
 // the board is not valid.
 // Returns TRUE if all cells have at least one possible value left.
 // Returns FALSE if there exists a cell with no possible values left ( i.e. at least one cell is wrong )
-bool Sudoku::isValid()
+bool Sudoku::isSolvable()
 {
 	int sum = 0;
 	for( int r = 0; r < 9; r++ )
@@ -714,7 +714,7 @@ bool Sudoku::recursiveSolver( int depth )
 //	print();
 
 	// If the board is invalid return false.
-	if( !isValid() )
+	if( !isSolvable() )
 	{
 		return false;
 	}
@@ -794,7 +794,7 @@ Square Sudoku::makeGuess()
 	bool broke = false;
 
 	// Only make a guess on valid unsolved boards.
-	if( isValid() && !isSolved() )
+	if( isSolvable() && !isSolved() )
 	{
 		// Find the first empty cell and save it.
 		for( int r = 0; r < 9; r++ )

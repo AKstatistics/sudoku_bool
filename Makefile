@@ -3,7 +3,6 @@ SHELL=/bin/sh
 .SUFFIXES: .cpp .o
 CC=g++
 CFLAGS=-c -Wall -std=c++11
-LDFLAGS=-lz
 SOURCES=main.cpp Sudoku.cpp Undo.cpp
 HEADERS=Sudoku.h Undo.h
 OBJECTS=$(SOURCES:.cpp=.o)
@@ -12,7 +11,7 @@ EXECUTABLE=play_sudoku
 all: $(SOURCES) $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) -Wall -std=c++11 $(OBJECTS) $(LDFLAGS) -o $@ 
+	$(CC) -Wall -std=c++11 $(OBJECTS) -o $@ 
 
 main.o: main.cpp
 	$(CC) $(CFLAGS) main.cpp
