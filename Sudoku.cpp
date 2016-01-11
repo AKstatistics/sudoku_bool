@@ -123,6 +123,7 @@ Sudoku::Sudoku( vector<int> initial )
 // Cell value mutator, only allows values that are still marked as possible to be set.
 bool Sudoku::set( int row, int col, int value )
 {
+    // check for valid value, row, and column
 	if( 1 > value || 9 < value )
 		return false;
 
@@ -132,9 +133,11 @@ bool Sudoku::set( int row, int col, int value )
 	if( 0 > col || 8 < col )
 		return false;
 
-	if( true == possible[row][col][0] )
+    // if the cell is not empty, you cannot change its value
+	if( 0 != cell[row][col] )
 		return false;
 
+    // if the value hasn't been eliminated from the possiblities
 	if( true == possible[row][col][value] )
 	{
 		cell[row][col] = value;
@@ -205,6 +208,7 @@ int Sudoku::get( int row, int col )
 // 	 Sudoku::lockedCandidates() but still pass Sudoku::isValid(,,) 
 bool Sudoku::isValid( int row, int col, int value )
 {
+    // check that value, row and col, are in range
 	if( value < 1 || value > 9 )
 		return false;
 
@@ -214,6 +218,8 @@ bool Sudoku::isValid( int row, int col, int value )
 	if( col < 0 || col > 8 )
 		return false;
 
+    // if the cell was specified in the initial puzzle
+    //      just return whether the value is in the cell
 	if( possible[row][col][0] == true )
 	{
 		if( cell[row][col] == value )
@@ -258,6 +264,16 @@ bool Sudoku::isValid( int row, int col, int value )
 // NOTE: !!!!! DIFFERENT THAN Sudoku::isValid(,,) !!!!!
 bool Sudoku::isPossible( int row, int col, int value )
 {
+    // check that value, row and col, are in range
+	if( value < 1 || value > 9 )
+		return false;
+
+	if( row < 0 || row > 8 )
+		return false;
+	
+	if( col < 0 || col > 8 )
+		return false;
+
 	return possible[row][col][value];
 }
 
@@ -344,7 +360,7 @@ void Sudoku::print(int row, int col )
 // Accessor for possible[row][col][0]
 // Returns TRUE if the cell value was part of the original puzzle ( i.e. non zero entry when Initialized Contructor was called )
 // Returns FALSE if the cell value has not been set or was set after initialization.
-bool Sudoku::isFixed( int row, int col )
+bool Sudoku::isGiven( int row, int col )
 {
 	if( row < 0 || row > 8 )
 		return false;
@@ -396,8 +412,6 @@ bool operator==( const Sudoku & lhs, const Sudoku & rhs )
 // This algorithm fills any cells with only one remaining possible value. 
 void Sudoku::fillSingles()
 {
-	int count = 0;
-	int saved = 0;
 
 	for( int r = 0; r < 9; r++ )
 	{
@@ -406,6 +420,8 @@ void Sudoku::fillSingles()
 			// First check that the cell is empty
 			if( cell[r][c] == 0 )
 			{
+                int count = 0;
+                int saved = 0;
 				// count the number of possible values
 				// save the previous possible value
 				for( int value = 1; value <= 9; value++ )
@@ -415,16 +431,14 @@ void Sudoku::fillSingles()
 						count++;
 						saved = value;
 					}
+                    if(count > 1)
+                        break;
 				}
 				// If there is only one possibility, the set the cell
 				if( 1 == count )
 				{
 					set( r, c, saved );
 				}
-				
-				// Reset counters
-				count = 0;
-				saved = 0;
 			}
 		}
 	}
@@ -437,64 +451,70 @@ void Sudoku::elimination()
 	int count;
 	Square saved;
 	for( int value = 1; value <= 9; value++ )
+    {
+        // Check rows
+        count = 0;
+        for( int r = 0; r < 9; r++ )
         {
-                // Check rows
-		count = 0;
-                for( int r = 0; r < 9; r++ )
+            for( int c = 0; c < 9; c++ )
+            {
+                if( possible[r][c][value] )
                 {
-                        for( int c = 0; c < 9; c++ )
-                        {
-                                if( possible[r][c][value] )
-                                {
-                                        saved.row = r;
-                                        saved.col = c;
-                                        count++;
-                                }
-                        }
-                        if( 1 == count )
-                                set( saved.row, saved.col, value );
+                    saved.row = r;
+                    saved.col = c;
+                    count++;
                 }
-
-                // Check columns
-		count = 0;
-                for( int c = 0; c < 9; c++ )
-                {
-                        for( int r = 0; r < 9; r++ )
-                        {
-                                if( possible[r][c][value] )
-                                {
-                                        saved.row = r;
-                                        saved.col = c;
-                                        count++;
-                                }
-                        }
-                        if( 1 == count )
-                                set( saved.row, saved.col, value );
-                }
-
-                // Check sub regions
-                for( int subR = 0; subR < 3; subR++ )
-                {
-			for( int subC = 0; subC < 3; subC++ )
-			{
-				count = 0;
-	                        for( int r = subR * 3; r < subR * 3 + 3; r++ )
-	                        {
-	                                for( int c = subC * 3; c < subC * 3 + 3; c++ )
-	                                {
-	                                        if( possible[r][c][value] )
-	                                        {
-	                                                saved.row = r;
-	                                                saved.col = c;
-	                                               	count++; 
-	                                        }
-	                                }
-	                        }
-	                        if( count == 1 )
-	                                set( saved.row, saved.col, value );
-			}
-                }
+                if( count > 1 )
+                    break;
+            }
+            if( 1 == count )
+                set( saved.row, saved.col, value );
         }
+
+        // Check columns
+        count = 0;
+        for( int c = 0; c < 9; c++ )
+        {
+            for( int r = 0; r < 9; r++ )
+            {
+                if( possible[r][c][value] )
+                {
+                    saved.row = r;
+                    saved.col = c;
+                    count++;
+                }
+                if( count > 1 )
+                    break;
+            }
+            if( 1 == count )
+                set( saved.row, saved.col, value );
+        }
+
+        // Check sub regions
+        for( int subR = 0; subR < 3; subR++ )
+        {
+            for( int subC = 0; subC < 3; subC++ )
+            {
+                count = 0;
+                for( int r = subR * 3; r < subR * 3 + 3; r++ )
+                {
+                    for( int c = subC * 3; c < subC * 3 + 3; c++ )
+                    {
+                        if( possible[r][c][value] )
+                        {
+                            saved.row = r;
+                            saved.col = c;
+                            count++; 
+                        }
+                        if( count > 1 )
+                            break;
+                    }
+                }
+                if( 1 == count )
+                    set( saved.row, saved.col, value );
+            }
+        }
+    }
 }
 
 // This algorithm makes inferences about the possible values but does NOT
@@ -694,7 +714,7 @@ bool Sudoku::isSolvable()
 // The recursive solver will solve any valid board. 
 // Returns TRUE If the board is solved.
 // Returns FALSE if the board is not solved and all appropriate guesses have been exhausted.
-bool Sudoku::recursiveSolver( int depth )
+bool Sudoku::recursiveSolver( /*int depth*/ )
 {
 	Sudoku original = *this;
 	Sudoku child;
@@ -746,7 +766,7 @@ bool Sudoku::recursiveSolver( int depth )
 			guess = cell[saved.row][saved.col];
 
 			// The recursiveSolver() will return whether the board is solved after making that guess.
-			validGuess = recursiveSolver( depth + 1 );
+			validGuess = recursiveSolver( /*depth + 1*/ );
 
 			// If it solved it return true.
 			if( validGuess )
@@ -791,7 +811,6 @@ Square Sudoku::makeGuess()
 	Square saved;
 	saved.row = -1;
 	saved.col = -1;
-	bool broke = false;
 
 	// Only make a guess on valid unsolved boards.
 	if( isSolvable() && !isSolved() )
@@ -805,11 +824,10 @@ Square Sudoku::makeGuess()
 				{
 					saved.row = r;
 					saved.col = c;
-					broke = true;
 					break;
 				}
 			}
-			if( broke )
+			if( -1 != saved.row )
 				break;
 		}
 

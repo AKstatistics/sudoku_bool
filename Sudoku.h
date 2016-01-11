@@ -1,4 +1,4 @@
-// Sudoku class definition
+// Sudoku class declaration
 // Adam Levy
 //
 // The Sudoku class consists of a 9x9 2d array of ints denoting the values in the cells
@@ -67,39 +67,63 @@ class Sudoku
 		Sudoku();
         // copy constructor
 		Sudoku( const Sudoku & );
+
         // initialize with a string or vector of values of length 81
         // 0 represents an empty cell
         // the board loads each row left to right, from the top row to the bottom. 
 		Sudoku( string );
 		Sudoku( vector<int> initial );
-		
+
+        // initializes bool possible[0-8][0-8][1-9] values using simple row,col,3x3subregion collisions
+        // overwrites existing possible values
 		void genInitPosVal();
 
-		// cell mutator and accessor
+        // All functions that return a bool and accept arguments (row, col, or value)
+        //      return false if the arguments are invalid/out of range
+
+		// set, cell mutator
+        // set returns false, if the cell has been filled cell[row][col] != 0
+        // set returns false, if possible[row][col][value]==false
+        // set returns true,  if it passes the above checks and possible[row][col][value]==true, 
+        // If set returns true, then it updates all possible values for the row, column, and subregion.
 		bool set( int row, int col, int value );
+
+        // get, cell accessor
+        // get returns the value in row, col
+        // get returns -1 if row or col is invalid
 		int get( int row, int col );
 
-		bool isValid( int row, int col, int value );
-		bool isSolvable();
+        // isPossible, possible accessor
+        // returns possible[row][col][value]
 		bool isPossible( int row, int col, int value );
-		bool isFixed( int row, int col );
+        // isGiven returns whether the cell was specified in the initial puzzle
+		bool isGiven( int row, int col );
+
+        // isValid evaluates row, col, subregion collisions, it does not check possible values
+        // isValid is used by genInitPosVal() to populate the possible values
+		bool isValid( int row, int col, int value );
+
+        // isSolved returns true if all cells are filled
 		bool isSolved();
-		
+        // isSolvable returns true is there is at least one possible value remaining for each cells
+		bool isSolvable();
+
+        // solver functions
+		void fillSingles(); // fills cells with only one remaining possiblity
+		void elimination(); // fills cells that are the last place a value can go in a row cell or subregion
+		void lockedCandidates(); // adjusts possible values but does not fill cells, see function definition
+		void deterministic();   // repeatedly loops through the above solver functions until no further changes can be made
+		bool recursiveSolver(/*int*/); // brute force, fill using guesses until a solution or an unsolvable board is reached
+		Square makeGuess(); // used by recursive solver to make a guess and return where the guess was made
+
+		// print functions
+		void print(); // prints the board
+		void print( int row, int col ); // prints board with * at row,col, used as a cursor in main.cpp
+		void print( int value ); // prints the possible board locations for value
+		void printPos(); // displays a 3x3 grid of possible values for all cells
+		void printFill(); // displays board with * for values that were specified in the initial puzzle
+
 		friend bool operator==( const Sudoku &lhs, const Sudoku &rhs );
 		friend bool operator!=( const Sudoku &lhs, const Sudoku &rhs ) { return !( lhs == rhs ); }
 		Sudoku & operator=( const Sudoku &rhs );
-		
-		void fillSingles();
-		void elimination();
-		void lockedCandidates();
-		void deterministic();
-		bool recursiveSolver(int );
-		Square makeGuess();
-
-		// print functions
-		void print();
-		void print( int row, int col );
-		void print( int );
-		void printPos();
-		void printFill();
 };

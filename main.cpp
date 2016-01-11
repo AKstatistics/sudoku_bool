@@ -204,7 +204,7 @@ void solve( Sudoku * board )
 {
 	Sudoku save = *board;
 
-	if( board->recursiveSolver( 0 ) )
+	if( board->recursiveSolver() )
 	{
 		cout << "Solved!" << endl;
 
@@ -225,7 +225,7 @@ void play ( Sudoku * board )
 	// Solve the board and have the original and solution on hand
 	Sudoku original = *board;
 	Sudoku solution = *board;
-	solution.recursiveSolver(0);
+	solution.recursiveSolver();
 	*board = original;
 	
 	Sudoku tempBoard;
@@ -245,7 +245,7 @@ void play ( Sudoku * board )
 	{
 		for( int c = 0; c < 9; c++ )
 		{
-			if( !board->isFixed(r, c) )
+			if( !board->isGiven(r, c) )
 			{
 				curRow = r;
 				curCol = c;
@@ -329,12 +329,12 @@ void play ( Sudoku * board )
 			for( ; curRow > 0; )
 			{
 				curRow--;
-				if( !board->isFixed( curRow, curCol ) )
+				if( !board->isGiven( curRow, curCol ) )
 				{
 					break;
 				}
 			}
-			if( 0 == curRow && board->isFixed( curRow, curCol ) )
+			if( 0 == curRow && board->isGiven( curRow, curCol ) )
 			{
 				curRow++;
 			}
@@ -344,12 +344,12 @@ void play ( Sudoku * board )
 			for( ; curCol > 0;  )
 			{
 				curCol--;
-				if( !board->isFixed( curRow, curCol ) )
+				if( !board->isGiven( curRow, curCol ) )
 				{
 					break;
 				}
 			}
-			if( 0 == curCol && board->isFixed( curRow, curCol ) )
+			if( 0 == curCol && board->isGiven( curRow, curCol ) )
 			{
 				curCol++;
 			}
@@ -359,12 +359,12 @@ void play ( Sudoku * board )
 			for( ; curRow < 8;  )
 			{
 				curRow++;
-				if( !board->isFixed( curRow, curCol ) )
+				if( !board->isGiven( curRow, curCol ) )
 				{
 					break;
 				}
 			}
-			if( 8 == curRow && board->isFixed( curRow, curCol ) )
+			if( 8 == curRow && board->isGiven( curRow, curCol ) )
 			{
 				curRow--;
 			}
@@ -374,12 +374,12 @@ void play ( Sudoku * board )
 			for( ; curCol < 8;  )
 			{
 				curCol++;
-				if( !board->isFixed( curRow, curCol ) )
+				if( !board->isGiven( curRow, curCol ) )
 				{
 					break;
 				}
 			}
-			if( 8 == curCol && board->isFixed( curRow, curCol ) )
+			if( 8 == curCol && board->isGiven( curRow, curCol ) )
 			{
 				curCol--;
 			}
