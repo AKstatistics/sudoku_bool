@@ -1,6 +1,6 @@
 #Sudoku
 A Sudoku board class with built in solver functions.
-The main has a command line interface for entering, playing, and solving sudoku boards.
+The main has a command line interface for playing and solving sudoku boards.
 Includes 5 hard coded boards and allows entering custom boards.
 The Undo class is used by the interface to allow undo when playing a board.
 ##About
