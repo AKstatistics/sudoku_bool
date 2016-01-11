@@ -4,8 +4,8 @@ The main has a command line interface for playing and solving sudoku boards.
 Includes 5 hard coded boards and allows entering custom boards.
 The Undo class is used by the interface to allow undo when playing a board.
 ##About
-I wrote this code for my CS201 Intro to C++ class at University of Alaska, Fairbanks Spring 2014.
-With the exception of the makefile, the code I submitted for the class is the first commit in this repo.
+I wrote this code as my final project for CS201 Intro to C++ class at University of Alaska, Fairbanks Spring 2014.
+With the exception of the makefile, the code I submitted for that class is the first commit in this repo.
 I have since made some minor changes for publishing it here.
 I have added comments and changed some function names for clarity and cleaned up some logic.
 I may continue to add some comments to the Sudoku class and update this README.md with more information about how my solver functions work but I don't expect to make many more changes to this code.
