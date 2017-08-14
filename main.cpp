@@ -7,6 +7,7 @@
 //
 // The main has several menus which allow the user to input a board, load an existing board, and then have the computer solve it or play the board in the game.
 // The game play features an undo function which is implemented via a linked list.
+#include <limits>
 #include "Sudoku.h"
 #include "Undo.h"
 
@@ -63,7 +64,7 @@ int main()
 	}
 
 	clear();
-	
+
 	// Once a board has been selected the user must decide
 	// to play the board
 	// or to have the computer solve it and print the solution
@@ -113,13 +114,13 @@ void clear()
 void clearIN()
 {
 	cin.clear();
-	cin.ignore( std::numeric_limits<std::streamsize>::max(), '\n' );
+	cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n' );
 }
 
 void addBoard( Sudoku ** board )
 {
 	string input;
-	
+
 	Sudoku exampleBoard( "900034050604700000000000900500080704000000000208010006003000000000002408010850009" );
 
 	for( ;; )
@@ -177,7 +178,7 @@ void selectBoard( Sudoku ** board )
 	}
 
 	string strBoard;
-	
+
 	switch( menu )
 	{
 		case 1:
@@ -227,7 +228,7 @@ void play ( Sudoku * board )
 	Sudoku solution = *board;
 	solution.recursiveSolver();
 	*board = original;
-	
+
 	Sudoku tempBoard;
 
 	Undo undo;
@@ -294,16 +295,16 @@ void play ( Sudoku * board )
 		board->print( curRow, curCol );
 
 		cout << endl;
-		
+
 		if( !( cin >> input ) )
 		{
 			clear();
 			clearIN();
 		}
-		
+
 		if( isdigit(input) )
 		{
-			t = &input; 
+			t = &input;
 		        val = atoi( t );
 			if( 1 <= val && val <= 9 )
 			{
@@ -322,7 +323,7 @@ void play ( Sudoku * board )
 			input = std::toupper( input );
 		}
 
-		// all of the cursor if statements continue to push the cursor in the 
+		// all of the cursor if statements continue to push the cursor in the
 		// specified direction until it reaches an uninitialized cell
 		if( 'W' == input )
 		{
